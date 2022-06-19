@@ -4,7 +4,7 @@
  *
  */
 var platform = new H.service.Platform({
-  apikey: process.env.API_KEY
+  apikey: API_KEY
 });
 
 
