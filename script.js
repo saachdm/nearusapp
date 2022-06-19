@@ -3,6 +3,11 @@
  * Moves the map to display over Berlin
  *
  */
+require('dotenv').config();
+
+var platform = new H.service.Platform({
+  apikey: process.env.API_KEY
+});
 
 
 var total_lat = 0;
@@ -18,6 +23,8 @@ var group;
 var placesResult = [];
 const cont = document.createElement("span");
 cont.setAttribute("id", "actualMap");
+
+
 
 class InputAddress {
   constructor() {
