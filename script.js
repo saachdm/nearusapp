@@ -3,9 +3,9 @@
  * Moves the map to display over Berlin
  *
  */
-var platform = new H.service.Platform({
-  apikey: apiKey
-});
+// var platform = new H.service.Platform({
+//   apikey: apiKey
+// });
 
 
 var total_lat = 0;
