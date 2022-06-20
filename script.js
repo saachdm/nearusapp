@@ -3,8 +3,6 @@
  * Moves the map to display over Berlin
  *
  */
-require('dotenv').config();
-const apiKey = process.env.API_KEY;
 var platform = new H.service.Platform({
   apikey: apiKey
 });
