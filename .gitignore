@@ -1,3 +1,4 @@
 .netlify
 .env
 node_modules
+pipfile
