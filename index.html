@@ -38,14 +38,28 @@
   </head>
 
   <body>
-    <h1>Nearus v2.0</h1>
     <div class="flex flex-col xl:flex-row sm:flex-col xl:gap-4 xl:h-full">
       <div
         class="place-items-center shadow-md place-content-center mx-6 mt-6 xl:m-auto bg-sky-900 rounded-lg mb-6 xl:w-4/12 sm:w-full"
         id="header"
       >
+        <h1 class="text-center py-4 text-xl text-slate-50 font-semibold">
+          Nearus v2.1
+        </h1>
+        <div class="px-16 pb-8 text-slate-50">
+          <p class="text-base text-l">Instructions:</p>
+          <ol class="list-decimal text-xs tracking-wide">
+            <li>Type your place of interest (ex:restaurant)</li>
+            <li>Define the search radius (ex:2000)</li>
+            <li>Type the address of the origins</li>
+            <li>
+              Press "submit". You might have to press it several times until the
+              map markers are properly shown. Sorry for this inconvenience
+            </li>
+          </ol>
+        </div>
         <div class="place-items-center rounded-t-lg">
-          <form class="bg-white shadow-md rounded-t-lg px-8 pt-6 pb-8 mb-4">
+          <form class="bg-white shadow-md px-8 pt-6 pb-8 mb-4">
             <div class="mb-4">
               <label
                 class="block text-gray-700 text-sm font-bold mb-2"
@@ -53,11 +67,25 @@
               >
                 Place of Interest
               </label>
-              <input
-                class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="text"
-                id="addressInput"
-              />
+              <div class="inline-flex">
+                <input
+                  class="text-sm shadow appearance-none border rounded-l-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  type="text"
+                  id="addressInput"
+                  placeholder="ex: restaurant"
+                />
+                <input
+                  class="text-sm shadow appearance-none border w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  type="number"
+                  id="searchRadiusInput"
+                  placeholder="Search radius. ex:5000"
+                />
+                <p
+                  class="shadow bg-slate-800 appearance-none border rounded-r-lg w-full py-2 px-3 text-slate-50 leading-tight focus:outline-none focus:shadow-outline max-w-fit"
+                >
+                  m
+                </p>
+              </div>
             </div>
             <div class="mb-6">
               <label class="block text-gray-700 text-sm font-bold mb-2">
@@ -99,7 +127,7 @@
           class="bg-border rounded shadow-md min-w-640 h-64 xl:min-h-screen"
           id="mapContainer"
         ></div>
-        <div class="mt-2 max-h-fit" id="gmapsContainer">
+        <div class="flex mt-2 max-h-fit" id="gmapsContainer">
           <!-- <a
             class="bg-yellow-400 hover:bg-yellow-500 text-slate-50 font-semibold hover:text-white rounded py-2 px-5 text-sm"
             href=""
@@ -109,14 +137,17 @@
         </div>
       </div>
     </div>
-    <br />
-    <p>catatan:</p>
-    <br />
-    <p>
-      Nearus v2.0 menggunakan HEREmaps, tidak seperti versi sebelumnya yang
-      menggunakan GMaps. Fitur pencarian yang dimiliki oleh HEREmaps ini belum
-      sebaik GMaps. Oleh karena itu, mohon bersabar hehe.
-    </p>
+    <div class="px-8 text-xs">
+      <br />
+      <p>Note:</p>
+      <br />
+      <p>
+        Since v2.0, Nearus migrated to HEREmaps from Google Maps due to pricing
+        reason. However, the geocoding feature are somewhat worse than Google
+        Maps. Due to this, we added "Search in google maps" button that directs
+        you to google maps using the same query for better results.
+      </p>
+    </div>
     <script type="text/javascript" src="script.js"></script>
   </body>
 </html>

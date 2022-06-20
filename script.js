@@ -1,20 +1,20 @@
-
-/**
- * Moves the map to display over Berlin
- *
- */
-var platform = new H.service.Platform({
-  apikey: NEARUS_HERE_API_KEY
-});
-
+try {
+  var platform = new H.service.Platform({
+    apikey: NEARUS_HERE_API_KEY
+  });
+  var service = platform.getSearchService();
+  var defaultLayers = platform.createDefaultLayers();
+}
+catch (err) {
+  alert("Error initializing API. Nearus might be unusable now. Contact developer")
+}
 
 var total_lat = 0;
 var total_long = 0;
 var n_items = 0;
 var submit = document.getElementById("submitButton");
 var mapInitiated = 0;
-var service = platform.getSearchService();
-var defaultLayers = platform.createDefaultLayers();
+
 var map;
 var ui;
 var group;
@@ -44,7 +44,7 @@ class InputAddress {
 }
 
 function createMap() {
-  console.log("Masuk create map");
+  console.log("Initializing map");
   // var map = new H.Map(document.getElementById('mapContainer'),
   map = new H.Map(document.getElementById('mapContainer').appendChild(cont),
     defaultLayers.raster.normal.map, {
@@ -95,10 +95,6 @@ function getInputCentroid() {
       q: tempInputArray[n],
       in: 'countryCode:IDN'
     }, (result) => {
-      // map.addObject(group);
-      // marker = new H.map.Marker(result.items[0].position);
-      // group.addObject(marker);
-      console.log(result.items);
       temp_lat = result.items[0].position.lat;
       temp_long = result.items[0].position.lng;
       temp_inputAddress.add(temp_lat, temp_long);
@@ -111,40 +107,28 @@ function getInputCentroid() {
     }
       , alert);
   }
-  // console.log(temp_lat);
-  // temp_lat = temp_lat / tempInputArray.length;
-  // temp_long = temp_long / tempInputArray.length;
-  // console.log([temp_lat, temp_long]);
-  // return [temp_lat, temp_long];
-  // return temp_inputAddress.calculateCentroid();
 }
 
 
 function execute(result, latArray, longArray) {
 
-  // var latlong = getInputCentroid();
-  // console.log(latlong);
-
   console.log({ latArray });
+  console.log({ longArray });
   var latAt = result[0].toString();
   var longAt = result[1].toString();
   let input = document.getElementById("addressInput").value;
-  let limit = 'circle:' + latAt.toString() + ',' + longAt.toString() + ';r=' + 10000;
+  let searchRadius = document.getElementById("searchRadiusInput").value;
+  let limit = 'circle:' + latAt.toString() + ',' + longAt.toString() + ';r=' + searchRadius;
 
   if (mapInitiated == 0) {
     createMap();
     mapInitiated += 1;
   } else {
     mapInitiated += 1;
-    console.log("masuk map initiated 1")
+    console.log("Reset map")
     group.removeAll();
-    // document.getElementById('mapContainer').removeChild(document.getElementById('actualMap'));
-    // createMap();
   }
   for (let n = 0; n < latArray.length; n++) {
-    // console.log(latArray[n]);
-    console.log(n);
-    // var svgMarker = '<svg xmlns=https://www.svgrepo.com/show/138889/pin.svg </svg>';
     var addressIcon = new H.map.Icon("https://img.icons8.com/external-kmg-design-outline-color-kmg-design/32/undefined/external-pin-maps-navigation-kmg-design-outline-color-kmg-design-1.png", { size: { w: 45, h: 45 } });
     var centroidIcon = new H.map.Icon("https://img.icons8.com/external-soft-fill-juicy-fish/60/undefined/external-pin-maps-and-navigation-soft-fill-soft-fill-juicy-fish.png", { size: { w: 45, h: 45 } });
     var marker_cent = new H.map.Marker({ lat: latAt, lng: longAt }, { icon: centroidIcon });
@@ -156,7 +140,6 @@ function execute(result, latArray, longArray) {
     q: input,
     in: limit
   }, (result) => {
-    // Add a marker for each location found
     let n_items = 0;
     let temp_lat = 0;
     let temp_long = 0;
@@ -164,38 +147,44 @@ function execute(result, latArray, longArray) {
     result.items.forEach((item) => {
 
       var placesIcon = new H.map.Icon("https://img.icons8.com/external-xnimrodx-blue-xnimrodx/64/undefined/external-pin-event-and-party-xnimrodx-blue-xnimrodx.png", { size: { w: 25, h: 25 } });
-      if (calculateHaversineDistance([latAt, longAt], [item.position.lat, item.position.lng]) < 5000) {
-        console.log("Masuk");
-        placesResult.push(item);
-        group.addObject(new H.map.Marker(item.position, { icon: placesIcon }));
-        map.addObject(group);
-        temp_lat += item.position.lat;
-        temp_long += item.position.lng;
-        n_items += 1;
-      }
-
-      // map.addObject(new H.map.Marker(item.position));
-      // map.addObject(new H.map.Marker(item.position));
-      // marker = new H.map.Marker(item.position);
-      // group.addObject(marker);
-
+      placesResult.push(item);
+      group.addObject(new H.map.Marker(item.position, { icon: placesIcon }));
+      map.addObject(group);
+      temp_lat += item.position.lat;
+      temp_long += item.position.lng;
+      n_items += 1;
     });
     total_lat = temp_lat / n_items;
     total_long = temp_long / n_items;
     map.setCenter({ lat: latAt, lng: longAt });
     createGMapsLink([latAt, longAt]);
+    new_bound = setBoundDiff(group)
     map.getViewModel().setLookAtData({
-      bounds: group.getBoundingBox()
+      bounds: new_bound
     }, opt_animate = true);
+
   }, alert);
   window.addEventListener('resize', () => map.getViewPort().resize());
 }
+
+function setBoundDiff(g) {
+  diff = 0.03;
+  to = g.getBoundingBox().getTop() + diff;
+  bot = g.getBoundingBox().getBottom() - diff;
+  rig = g.getBoundingBox().getRight() + diff;
+  lef = g.getBoundingBox().getLeft() - diff;
+  new_bound = new H.geo.Rect(top = to, left = lef, bottom = bot, right = rig);
+  return new_bound
+
+}
+
 
 
 var i = 0;
 var inputContainer = document.getElementById("inputContainer");
 
 if (i == 0) {
+  addInputForm();
   addInputForm();
 }
 function addInputForm() {
@@ -205,31 +194,35 @@ function addInputForm() {
   input.id = "input" + i;
   i += 1;
   inputContainer.appendChild(input);
-  // inputContainer.appendChild(document.createElement("br"));
 }
 
 
 function removeInputForm() {
-  let temp = i - 1;
-  temp = temp.toString();
-  var elTemp = document.getElementById("input" + temp);
-  elTemp.remove();
-  i = i - 1;
+  if (i == 2) {
+    alert("Minimum address=2")
+  } else {
+    let temp = i - 1;
+    temp = temp.toString();
+    var elTemp = document.getElementById("input" + temp);
+    elTemp.remove();
+    i = i - 1;
+  }
 }
 
 function createGMapsLink(cent_coord) {
-  console.log({ mapInitiated });
   if (mapInitiated == 1) {
     var linkElement = document.createElement("a");
-    // var linkElement = document.getElementById("linkContainer")
+    var pingElement = document.createElement("span");
+    pingElement.className = "animate-ping absolute inline-flex h-2 w-2 rounded-full bg-sky-400 opacity-80"
     latAt = cent_coord[0];
     longAt = cent_coord[1];
     var linkStr = "https://www.google.com/maps/search/" + document.getElementById("addressInput").value + "/@" + latAt.toString() + ',' + longAt.toString() + ",14.35z";
     linkElement.href = linkStr;
     linkElement.id = "gmapsButton";
-    linkElement.className = "bg-yellow-400 hover:bg-yellow-500 text-slate-50 font-semibold hover:text-white rounded py-2 px-5 text-sm";
+    linkElement.className = "bg-yellow-400 hover:bg-yellow-500 text-slate-50 font-semibold hover:text-white rounded py-2 px-5 text-sm inline-flex";
     linkElement.target = "_blank";
     linkElement.innerHTML = "Search in Google Maps"
+    gmapsContainer.appendChild(pingElement);
     gmapsContainer.appendChild(linkElement);
   } else {
     linkElement = document.getElementById('gmapsButton');
