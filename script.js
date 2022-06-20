@@ -4,7 +4,7 @@
  *
  */
 var platform = new H.service.Platform({
-  apikey: NEARUS_HERE_API_KEY;
+  apikey: NEARUS_HERE_API_KEY
 });
 
 
